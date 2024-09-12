@@ -1,5 +1,3 @@
-using Castle.DynamicProxy;
-
 namespace Baccon;
 
 public interface ActorInstance
@@ -8,12 +6,12 @@ public interface ActorInstance
     object Actor { get; }
 }
 
-public class ActorInstance<TActor> : ActorInstance where TActor : class
+public class ActorInstance<TContract, TActor> : ActorInstance where TActor : class where TContract : class
 {
     public ActorScheduler Scheduler { get; }
     public object Actor { get; }
 
-    private TActor Proxy { get; }
+    private TContract Proxy { get; }
 
     public ActorInstance()
     {
@@ -21,15 +19,13 @@ public class ActorInstance<TActor> : ActorInstance where TActor : class
         WorkerTask = Scheduler.ExecuteTasks();
         var instance = Activator.CreateInstance<TActor>();
         Actor = instance;
-        var interceptor = new ActorProxy(this);
-        var generator = new ProxyGenerator();
-        Proxy = generator.CreateClassProxy<TActor>(interceptor);
+        Proxy = ActorProxy.CreateActor<TContract>(this);
     }
 
     public Task WorkerTask { get; set; }
 
-    public TActor GetActor()
+    public TContract GetActor()
     {
-        return Proxy as TActor;
+        return Proxy as TContract;
     }
 }

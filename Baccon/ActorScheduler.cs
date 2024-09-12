@@ -16,17 +16,15 @@ public class ActorScheduler : TaskScheduler
         tasks.Writer.TryWrite(task);
     }
 
-    public void AddTask(Task task)
-    {
-        tasks.Writer.TryWrite(task);
-    }
-
     public Task ExecuteTasks()
     {
         async Task InnerTask()
         {
-            var task = await tasks.Reader.ReadAsync();
-            TryExecuteTask(task);
+            while (true)
+            {
+                var task = await tasks.Reader.ReadAsync();
+                TryExecuteTask(task);
+            }
         }
 
         return Task.Run(InnerTask);

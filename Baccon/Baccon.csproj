@@ -8,8 +8,4 @@
         <RootNamespace>Baccon</RootNamespace>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Castle.Core.AsyncInterceptor" Version="2.1.0" />
-    </ItemGroup>
-
 </Project>
